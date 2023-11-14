@@ -13,7 +13,6 @@ function updateTotalTime() {
     if (onYoutube) {
         totalTimeOnYouTube += 1;
         console.log("Total time on YouTube: " + totalTimeOnYouTube + "seconds");
-		updatePopup();
         checkTimeLimit();
     }
 }
@@ -21,6 +20,7 @@ function updateTotalTime() {
 // Function to be called every second
 function runEverySecond() {
     updateTotalTime();
+	updatePopup();
 }
 
 // Set up an interval to call the function every second
