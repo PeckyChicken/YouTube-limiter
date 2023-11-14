@@ -1,0 +1,2 @@
+This extension will track your time spent on youtube. This is counted by the amount of time you are focused on a tab where the url contains "youtube.com".
+If it reaches an hour, or the user's set limit, any page you open with youtube on it will be instantly closed.

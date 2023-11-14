@@ -1,0 +1,28 @@
+{
+    "name": "YouTube Limiter",
+    "description": "You can limit the time you spend on YouTube with this extension. You set a maximum time you allow yourself on it each day, and once you reach that you can't go to YouTube until it resets.",
+    "version": "0.1.0",
+    "manifest_version": 3,
+    "icons": {
+        "128": "icon.png"
+    },
+    "background": {
+        "service_worker": "background.js"
+    },
+    "action": {
+        "default_popup": "popup.html",
+        "default_icon": {
+            "128": "icon.png"
+        }
+    },
+    "options_page": "options.html",
+    "permissions": [
+        "storage",
+        "activeTab",
+        "scripting",
+        "tabs"
+    ],
+    "host_permissions": [
+        "https://www.google.com/*"
+    ]
+}
