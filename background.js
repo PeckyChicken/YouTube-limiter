@@ -1,14 +1,11 @@
-// Define variables to keep track of total time spent on YouTube and the time limit
 let totalTimeOnYouTube = 0;
 const timeLimit = 3600;
 let onYoutube = false
 
-// Function to check if a URL is from YouTube
 function isYouTubeUrl(url) {
     return url.includes("youtube.com");
 }
 
-// Function to update the total time spent on YouTube
 function updateTotalTime() {
     if (onYoutube) {
         totalTimeOnYouTube += 1;
@@ -17,20 +14,17 @@ function updateTotalTime() {
     }
 }
 
-// Function to be called every second
-function runEverySecond() {
+function second() {
     updateTotalTime();
 	updatePopup();
 }
 
-// Set up an interval to call the function every second
-setInterval(runEverySecond, 1000);
+setInterval(second, 1000);
 
 
 chrome.tabs.onUpdated.addListener(updateTotalTime);
 
 
-// Function to close tabs if the time limit is reached
 function checkTimeLimit() {
     if (totalTimeOnYouTube >= timeLimit) {
         chrome.tabs.query({ url: "*://*.youtube.com/*" }, function (tabs) {
