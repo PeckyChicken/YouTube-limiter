@@ -1,4 +1,5 @@
 let totalTimeOnYouTube = 0;
+let last_date = 0;
 const timeLimit = 3600;
 let onYoutube = false
 
@@ -15,10 +16,10 @@ function updateTotalTime() {
 }
 
 function resetAtMidnight(){
-    date = new Date().toLocaleTimeString();
-    //console.log(date)
-    if (date === "00:00:00"){
-        totalTimeOnYouTube = 0;
+    date = new Date().toLocaleDateString();
+    if (date != last_date){
+        last_date = date
+        totalTimeOnYouTube = 0
     }
     
 }
