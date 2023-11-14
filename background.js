@@ -14,9 +14,19 @@ function updateTotalTime() {
     }
 }
 
+function resetAtMidnight(){
+    date = new Date().toLocaleTimeString();
+    //console.log(date)
+    if (date === "00:00:00"){
+        totalTimeOnYouTube = 0;
+    }
+    
+}
+
 function second() {
     updateTotalTime();
 	updatePopup();
+    resetAtMidnight();
 }
 
 setInterval(second, 1000);
