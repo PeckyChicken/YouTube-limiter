@@ -39,7 +39,7 @@ function checkTimeLimit() {
 
 
 function updatePopup() {
-    chrome.runtime.sendMessage({ totalTime: totalTimeOnYouTube });
+    chrome.runtime.sendMessage({ totalTime: totalTimeOnYouTube ,timeLimit: timeLimit});
 }
 
 //Event listener for tab updates (when a tab is switched or updated)

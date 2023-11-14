@@ -7,19 +7,27 @@
         <!--<img src="./background.png" alt="Gradient red background" style="display:inline">-->
         <title>YouTube Limiter</title>
         <style>
-            h1 {
+            h1,h2{
                 color: white;
                 text-align:center;
             }
-            h2 {
+            button{
                 color: white;
-                text-align:center;
+                text-align: center;
+                align-self: center;
+                background-color: red;
+                border-color: red;
+                font: 50px;
             }
         </style>
     </head>
     <body style="height: 300px; width: 400px;background-image:image-set('background.png');">
-        <h1>YouTube Limiter<br></h1>
-        <h2 id="timer" >Time on YouTube today:<br>xx:xx:xx</h2>
+        <div style="text-align: center;">
+            <h1>YouTube Limiter<br></h1>
+            <h2 id="timer" >Time on YouTube today:<br>Loading...</h2>
+            <h2 id="timelimit" >Limit:<br>Loading...</h2>
+            <a href="options.html" target="_blank"><button>Configure</button></a>
+        </div>
         <script src="popup.js"></script>
     </body>
 </html>
