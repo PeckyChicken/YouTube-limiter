@@ -1,6 +1,6 @@
 // Define variables to keep track of total time spent on YouTube and the time limit
 let totalTimeOnYouTube = 0;
-const timeLimit = 60;
+const timeLimit = 3600;
 let onYoutube = false
 
 // Function to check if a URL is from YouTube
