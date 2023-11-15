@@ -33,9 +33,6 @@ function second() {
 setInterval(second, 1000);
 
 
-chrome.tabs.onUpdated.addListener(updateTotalTime);
-
-
 function checkTimeLimit() {
     if (totalTimeOnYouTube >= timeLimit) {
         chrome.tabs.query({ url: "*://*.youtube.com/*" }, function (tabs) {
