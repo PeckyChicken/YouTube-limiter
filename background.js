@@ -1,40 +1,70 @@
-let totalTimeOnYouTube = 0;
-let last_date = 0;
-const timeLimit = 3600;
-let onYoutube = false
+let totalTime = 0;
+let lastDate = 0;
+const timeLimit = 7200;
+
+let onYoutube = false;
+let currentUrl = "";
+let loaded = false;
+let storedData = {"time":0,"date":"1/1/1"}
 
 function isYouTubeUrl(url) {
     return url.includes("youtube.com");
 }
 
+function isExtensionPage(url) {
+    return url.includes("://extensions");
+}
+
+function loadData(){
+    chrome.storage.local.get("data").then((res)=>{lastDate = res.data.date ?? new Date().toLocaleDateString();
+                                        totalTime = res.data.time ?? 0;
+                                        console.log(res.data);})
+}
+
 function updateTotalTime() {
     if (onYoutube) {
-        totalTimeOnYouTube += 1;
-        console.log("Total time on YouTube: " + totalTimeOnYouTube + "seconds");
+        totalTime += 1;
+        storedData.time = totalTime
+        console.log("Total time on YouTube: " + totalTime + " seconds");
         checkTimeLimit();
     }
 }
 
+function saveData(value) {
+    chrome.storage.local.set({ "data": value }, function() {
+        console.log("Storage updated successfully");
+    });
+}
+
 function resetAtMidnight(){
     date = new Date().toLocaleDateString();
-    if (date != last_date){
-        last_date = date
-        totalTimeOnYouTube = 0
+    if (date != lastDate){
+        lastDate = date;
+        totalTime = 0;
+        storedData.time = 0
+        storedData.date = date
+
     }
     
 }
 
 function second() {
-    updateTotalTime();
-	updatePopup();
+    if (!loaded){
+        loadData();
+        
+        loaded = true;
+    }
     resetAtMidnight();
+    updatePopup();
+    updateTotalTime();
+    saveData(storedData)
 }
 
-setInterval(second, 1000);
+
 
 
 function checkTimeLimit() {
-    if (totalTimeOnYouTube >= timeLimit) {
+    if (totalTime >= timeLimit) {
         chrome.tabs.query({ url: "*://*.youtube.com/*" }, function (tabs) {
             tabs.forEach(function (tab) {
                 chrome.tabs.remove(tab.id, function () {
@@ -47,19 +77,21 @@ function checkTimeLimit() {
 
 
 function updatePopup() {
-    chrome.runtime.sendMessage({ totalTime: totalTimeOnYouTube ,timeLimit: timeLimit});
+    try{chrome.runtime.sendMessage({ totalTime: totalTime ,timeLimit: timeLimit});}
+    catch (err){console.log(err)}
 }
 
 //Event listener for tab updates (when a tab is switched or updated)
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 	if (changeInfo.status === "complete") {
-		if (isYouTubeUrl(tab.url)) {
+        currentUrl = tab.url
+		if (isYouTubeUrl(currentUrl)) {
 			console.log("User switched to youtube");
-			onYoutube = true
+			onYoutube = true;
 		}
 		else {
-			console.log("User switched away from youtube")
-			onYoutube = false
+			console.log("User switched away from youtube");
+			onYoutube = false;
 		}
 	}
 });
@@ -67,7 +99,8 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 // Event listener for tab switching
 chrome.tabs.onActivated.addListener(function (activeInfo) {
     chrome.tabs.get(activeInfo.tabId, function (tab) {
-        if (isYouTubeUrl(tab.url)) {
+        currentUrl = tab.url
+        if (isYouTubeUrl(currentUrl)) {
             console.log("User switched to YouTube");
             onYoutube = true;
         } else {
@@ -86,3 +119,7 @@ chrome.runtime.onInstalled.addListener(function () {
 chrome.runtime.onStartup.addListener(function () {
     console.log("Extension started with the browser");
 });
+
+//Start everything
+
+setInterval(second, 1000);
