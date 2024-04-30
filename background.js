@@ -1,6 +1,7 @@
 let totalTime = 0;
 let lastDate = 0;
-const timeLimit = 7200;
+const timeLimit = 3600;
+const warningTime = 3300;
 
 let onYoutube = false;
 let currentUrl = "";
