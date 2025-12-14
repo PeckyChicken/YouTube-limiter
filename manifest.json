@@ -17,7 +17,7 @@
     },
       "web_accessible_resources": [
         {
-        "resources": ["warning.mp3"],
+        "resources": ["warning.mp3","blocked.html"],
         "matches": ["*://*.youtube.com/*"]
         }
     ],

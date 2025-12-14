@@ -36,7 +36,7 @@ function sendWarning(){
 function updateTotalTime() {
     if (onYoutube) {
         totalTime += 1;
-        
+        totalTime = Math.min(totalTime,timeLimit)
         checkTimeLimit();
     }
     storedData.time = totalTime
@@ -86,9 +86,11 @@ function checkTimeLimit() {
     if (totalTime >= timeLimit) {
         chrome.tabs.query({ url: "*://*.youtube.com/*" }, function (tabs) {
             tabs.forEach(function (tab) {
-                chrome.tabs.remove(tab.id, function () {
-                    console.log("Closed YouTube tab due to time limit");
-                });
+                    chrome.scripting.executeScript({
+                    target: { tabId: currentTabId },
+                    files: ["timeup.js"]
+                    });
+                    console.log("Time is up, blocking YouTube")
             });
         });
     }

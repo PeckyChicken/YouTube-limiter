@@ -1,0 +1,3 @@
+location.replace(
+  chrome.runtime.getURL("blocked.html")
+);

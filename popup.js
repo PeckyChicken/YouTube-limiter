@@ -15,6 +15,7 @@ chrome.runtime.sendMessage({ type: "get_time" },response => {
 setInterval(() => {
     if (watching) {
         localTime += 1;
+        localTime = Math.min(localTime,timeLimit)
         updateDisplay(localTime, timeLimit);
     }
 }, 1000);
