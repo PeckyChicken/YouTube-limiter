@@ -5,8 +5,14 @@ const warningTime = 3300;
 
 let onYoutube = false;
 let currentUrl = "";
+let currentTabId = null;
 let loaded = false;
 let storedData = {"time":0,"date":"1/1/1"}
+
+let views = []
+
+let popupOpen = false;
+
 
 function isYouTubeUrl(url) {
     return url.includes("youtube.com");
@@ -21,19 +27,24 @@ function loadData(){
                                         totalTime = res.data.time ?? 0;
                                         console.log(res.data);})
 }
-
+function sendWarning(){
+    chrome.scripting.executeScript({
+    target: { tabId: currentTabId },
+    files: ["warning.js"]
+    });
+}
 function updateTotalTime() {
     if (onYoutube) {
         totalTime += 1;
-        storedData.time = totalTime
-        console.log("Total time on YouTube: " + totalTime + " seconds");
+        
         checkTimeLimit();
     }
+    storedData.time = totalTime
+
 }
 
 function saveData(value) {
     chrome.storage.local.set({ "data": value }, function() {
-        console.log("Storage updated successfully");
     });
 }
 
@@ -56,12 +67,19 @@ function second() {
         loaded = true;
     }
     resetAtMidnight();
-    updatePopup();
     updateTotalTime();
     saveData(storedData)
 }
 
-
+chrome.runtime.onMessage.addListener(function (message,sender,sendResponse) {
+        if (message.type == "get_time") {
+            sendResponse({
+                totalTime: totalTime,
+                timeLimit: timeLimit,
+                watching: onYoutube
+            })
+        }
+    });
 
 
 function checkTimeLimit() {
@@ -74,33 +92,16 @@ function checkTimeLimit() {
             });
         });
     }
+    if (totalTime === warningTime) {
+        sendWarning();
+    }
 }
-
-
-function updatePopup() {
-    try{chrome.runtime.sendMessage({ totalTime: totalTime ,timeLimit: timeLimit});}
-    catch (err){console.log(err)}
-}
-
-//Event listener for tab updates (when a tab is switched or updated)
-chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-	if (changeInfo.status === "complete") {
-        currentUrl = tab.url
-		if (isYouTubeUrl(currentUrl)) {
-			console.log("User switched to youtube");
-			onYoutube = true;
-		}
-		else {
-			console.log("User switched away from youtube");
-			onYoutube = false;
-		}
-	}
-});
 
 // Event listener for tab switching
 chrome.tabs.onActivated.addListener(function (activeInfo) {
     chrome.tabs.get(activeInfo.tabId, function (tab) {
-        currentUrl = tab.url
+        currentUrl = tab.url;
+        currentTabId = tab.id;
         if (isYouTubeUrl(currentUrl)) {
             console.log("User switched to YouTube");
             onYoutube = true;
@@ -123,4 +124,5 @@ chrome.runtime.onStartup.addListener(function () {
 
 //Start everything
 
+second();
 setInterval(second, 1000);

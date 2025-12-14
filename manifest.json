@@ -15,14 +15,21 @@
             "128": "icon.png"
         }
     },
+      "web_accessible_resources": [
+        {
+        "resources": ["warning.mp3"],
+        "matches": ["*://*.youtube.com/*"]
+        }
+    ],
     "options_page": "options.html",
     "permissions": [
         "storage",
         "activeTab",
         "scripting",
-        "tabs"
+        "tabs",
+        "notifications"
     ],
     "host_permissions": [
-        "https://www.google.com/*"
+        "*://*.youtube.com/*"
     ]
 }
