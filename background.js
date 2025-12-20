@@ -90,7 +90,6 @@ chrome.runtime.onMessage.addListener(function (message,sender,sendResponse) {
 
 function checkTimeLimit() {
     if (totalTime >= timeLimit && !blocked) {
-        blocked = true;
         chrome.tabs.query({ url: "*://*.youtube.com/*" }, function (tabs) {
             tabs.forEach(function (tab) {
                     chrome.scripting.executeScript({
