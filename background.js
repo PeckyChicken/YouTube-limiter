@@ -12,7 +12,7 @@ let storedData = {"time":0,"date":"1/1/1"}
 let views = []
 
 let popupOpen = false;
-
+let blocked = false;
 
 function isYouTubeUrl(url) {
     return url.includes("youtube.com");
@@ -55,6 +55,12 @@ function resetAtMidnight(){
         totalTime = 0;
         storedData.time = 0
         storedData.date = date
+        blocked = false;
+        chrome.tabs.query({ url: "*://*.youtube.com/*" }, function (tabs) {
+            tabs.forEach(function (tab) {
+                chrome.tabs.reload(tab.id);
+            });
+        });
 
     }
     
@@ -83,7 +89,8 @@ chrome.runtime.onMessage.addListener(function (message,sender,sendResponse) {
 
 
 function checkTimeLimit() {
-    if (totalTime >= timeLimit) {
+    if (totalTime >= timeLimit && !blocked) {
+        blocked = true;
         chrome.tabs.query({ url: "*://*.youtube.com/*" }, function (tabs) {
             tabs.forEach(function (tab) {
                     chrome.scripting.executeScript({
@@ -112,6 +119,19 @@ chrome.tabs.onActivated.addListener(function (activeInfo) {
             onYoutube = false;
         }
     });
+});
+
+chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+    if (tabId === currentTabId && changeInfo.url) {
+        currentUrl = changeInfo.url;
+        if (isYouTubeUrl(currentUrl)) {
+            console.log("User switched to YouTube");
+            onYoutube = true;
+        } else {
+            console.log("User switched away from YouTube");
+            onYoutube = false;
+        }
+    }
 });
 
 // Event listener for installing the extension
